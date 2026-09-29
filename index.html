@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Treino & Recuperação V12</title>
+<style>
+:root{--bg:#0b0e12;--p:#151a21;--p2:#1d252e;--line:#2b3440;--txt:#f4f7fb;--mut:#99a5b3;--g:#67d99c;--y:#efc95c;--r:#ed7777;--b:#67a9ff}
+*{box-sizing:border-box}body{margin:0;background:#0b0e12;color:var(--txt);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif}
+header,main,.navin{max-width:1240px;margin:auto}header{padding:24px 18px 14px}.brand{font-size:27px;font-weight:850}.sub{color:var(--mut);font-size:13px;margin-top:4px}
+nav{position:sticky;top:0;z-index:20;background:#0b0e12ed;border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}.navin{display:flex;gap:5px;overflow:auto;padding:8px 12px}.navin button{border:0;background:none;color:var(--mut);padding:10px 13px;border-radius:9px;white-space:nowrap}.navin button.active{background:var(--p2);color:var(--txt)}
+main{padding:18px 18px 60px}.tab{display:none}.tab.active{display:block}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.card{background:linear-gradient(#151a21,#12171d);border:1px solid var(--line);border-radius:15px;padding:16px}.hero{padding:20px;border-radius:16px;border:1px solid var(--line);background:linear-gradient(135deg,#17231d,#12171d)}
+h2{font-size:19px;margin:0 0 13px}h3{font-size:15px;margin:0 0 7px}.label{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}.metric{font-size:30px;font-weight:850}.small{font-size:12px;color:var(--mut)}.good{color:var(--g)}.warn{color:var(--y)}.bad{color:var(--r)}
+.between{display:flex;justify-content:space-between;align-items:center;gap:10px}.row{display:flex;gap:8px;align-items:center}.pill,.tag{display:inline-block;padding:4px 8px;border-radius:999px;background:#232c35;color:#d5dde6;font-size:11px;margin:2px}.pill.good{background:#1e3027}.pill.warn{background:#332d1c}.pill.bad{background:#372020}
+input,select,textarea{width:100%;background:#0d1217;color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:9px}textarea{min-height:65px;resize:vertical}label{display:block;color:var(--mut);font-size:12px;margin:8px 0 5px}
+button.primary,.btn{border:0;border-radius:9px;padding:10px 14px;font-weight:750;cursor:pointer;background:var(--g);color:#07130d}.btn.secondary{background:var(--p2);color:var(--txt);border:1px solid var(--line)}.btn.danger{background:#3b2020;color:#ffd5d5;border:1px solid #613030}
+.day{border-left:3px solid var(--b);padding-left:12px;margin-bottom:18px}.exercise{padding:9px 0;border-bottom:1px solid var(--line)}.exercise:last-child{border-bottom:0}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line);font-size:13px}th{color:var(--mut)}
+.progress{height:9px;background:#29313a;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:var(--g);border-radius:99px}
+.section{border:1px solid var(--line);border-radius:11px;padding:12px;margin-top:12px;background:#11161c}.hidden{display:none}.mutedbox{padding:10px;border:1px dashed var(--line);border-radius:9px;color:var(--mut);font-size:12px}
+canvas{width:100%;height:220px;background:#0d1217;border:1px solid var(--line);border-radius:10px}
+
+.setrow{display:grid;grid-template-columns:70px 1fr 1fr 1fr auto;gap:8px;align-items:end;padding:10px;background:#11161c;border:1px solid var(--line);border-radius:10px;margin-bottom:8px}
+.setnum{font-weight:800;color:var(--mut);padding-bottom:9px}.remove{background:#3b2020;color:#ffd5d5;border:1px solid #613030;border-radius:8px;padding:8px 10px;cursor:pointer}
+@media(max-width:700px){.setrow{grid-template-columns:1fr 1fr}.setnum{grid-column:1/-1}.remove{grid-column:2}}
+.toast{position:fixed;right:18px;bottom:18px;background:#202932;border:1px solid var(--line);padding:12px 15px;border-radius:10px;display:none;z-index:50}
+@media(max-width:850px){.grid4,.grid3{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}@media(max-width:520px){.grid4,.grid3{grid-template-columns:1fr 1fr}main{padding:13px}.metric{font-size:25px}}
+
+.musclePage{overflow:hidden}.muscleHeader{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}.muscleViewTabs{display:flex;gap:7px;flex-shrink:0}.muscleViewBtn{border:1px solid var(--line);background:#f4f7fa;color:var(--mut);padding:10px 16px;border-radius:10px;font-weight:900;cursor:pointer}.muscleViewBtn.activeMuscleView{background:#172231;color:#fff;border-color:#172231}.muscleLegend{display:flex;flex-wrap:wrap;gap:14px;margin:15px 0 8px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:#f8fafc;font-size:11px;color:var(--mut)}.muscleLegend span{display:flex;align-items:center;gap:6px}.dot{width:10px;height:10px;border-radius:50%;display:inline-block}.primaryDot{background:#ef476f}.secondaryDot{background:#4aa3df}.noneDot{background:#aab3bd}.detailedMap{border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#f8fafc,#fff);overflow:hidden;min-height:760px}.detailedMap svg{display:block;width:100%;height:auto;min-height:760px}.muscleShape{cursor:pointer;stroke:#fff;stroke-width:2;transition:.15s}.muscleShape:hover{filter:brightness(1.08);stroke:#172231;stroke-width:3}.muscleShape.selected{stroke:#172231;stroke-width:4;filter:brightness(1.1)}.bodyOutline{fill:#eef2f5;stroke:#cbd3db;stroke-width:3}.bone{fill:#dfe4e9;stroke:#c6cdd5;stroke-width:1.5}.muscleLabel{font:700 14px system-ui,sans-serif;fill:#263241;pointer-events:none}.mapTitle{font:900 25px system-ui,sans-serif;fill:#172231}.mapSubtitle{font:500 13px system-ui,sans-serif;fill:#657180}.mapFoot{margin-top:8px}.muscleList .exercise{margin-bottom:8px}.muscleList .progress{margin-top:6px}.mapSideCard{fill:#fff;stroke:#d8dee5;stroke-width:1.5}.mapSideText{font:700 12px system-ui,sans-serif;fill:#3d4956}.mapSideMuted{font:500 11px system-ui,sans-serif;fill:#7a8591}@media(max-width:700px){.muscleHeader{flex-direction:column}.muscleViewTabs{width:100%}.muscleViewBtn{flex:1}.detailedMap,.detailedMap svg{min-height:560px}.muscleLegend{font-size:10px}}
+.muscleMapWrap img{display:block;width:100%;height:auto}
+.muscleHotspot{position:absolute;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:50%;border:3px solid rgba(255,255,255,.95);background:rgba(103,169,255,.82);box-shadow:0 3px 12px #0008;cursor:pointer;line-height:1;transition:.15s;z-index:2}
+.muscleHotspot:hover,.muscleHotspot.selected{transform:translate(-50%,-50%) scale(1.16);background:rgba(103,217,156,.95);box-shadow:0 0 0 5px rgba(103,217,156,.18),0 5px 16px #0009}
+.muscleHotspot span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:18px;font-weight:900;color:#081018}
+.activeMuscleView{background:var(--b)!important;color:#06101c!important;border-color:var(--b)!important}
+.muscleDetail h3{margin-bottom:4px}.muscleExercise{padding:10px 0;border-bottom:1px solid var(--line)}.muscleExercise:last-child{border-bottom:0}.muscleRole{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-left:6px}
+.muscleStats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}.muscleStat{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:9px}.muscleStat b{display:block;font-size:17px}.muscleStat span{font-size:11px;color:var(--mut)}
+.muscleExerciseStats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:7px}.muscleExerciseStats div{font-size:11px;color:var(--mut)}.muscleExerciseStats b{display:block;font-size:13px;color:var(--text)}
+.muscleTrend.up{color:#16834d}.muscleTrend.down{color:#b33b3b}.muscleTrend.flat{color:var(--mut)}
+@media(max-width:700px){.muscleStats{grid-template-columns:repeat(2,1fr)}.muscleExerciseStats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.muscleHotspot{width:34px;height:34px;border-width:2px}.muscleHotspot span{font-size:14px}.muscleMapWrap{margin-left:-4px;margin-right:-4px}}
+
+.photoMuscleMap{display:block;width:100%;height:auto;max-height:860px;margin:0 auto;background:#fff}.photoHotspot{cursor:pointer;stroke:transparent;stroke-width:3;opacity:.04;transition:opacity .16s ease,stroke .16s ease,filter .16s ease}.photoHotspot:hover,.photoHotspot.hovered{opacity:.26;stroke:#172231;stroke-width:3;filter:brightness(1.08)}.photoHotspot.selected{opacity:.62;stroke:#ff6b35;stroke-width:4;filter:brightness(1.12)}.detailedMap{display:flex;justify-content:center;align-items:center;padding:8px;background:#fff;min-height:0;box-shadow:inset 0 0 0 1px #edf0f3}.detailedMap .photoMuscleMap{width:min(100%,570px)}.musclePage{background:#fff}.muscleLegend{background:#f7f8fa}.muscleMapHint{display:flex;justify-content:center;gap:8px;align-items:center;padding:10px 0 2px;font-size:11px;color:var(--mut)}
+@media(max-width:700px){.detailedMap .photoMuscleMap{width:100%}.detailedMap{padding:2px}}
+
+.anatomicalMap{display:flex;justify-content:center;align-items:center;background:#fff!important;padding:12px!important;border:1px solid #e5e9ee;border-radius:16px;overflow:hidden}.anatomicalCanvas{position:relative;width:min(100%,720px);margin:auto}.anatomicalCanvas img{display:block;width:100%;height:auto}.anatomicalCanvas svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}.anatomicalRegion{fill:rgba(255,107,53,0);stroke:rgba(255,107,53,0);stroke-width:2;vector-effect:non-scaling-stroke;cursor:pointer;transition:fill .14s,stroke .14s,filter .14s}.anatomicalRegion:hover{fill:rgba(255,107,53,.30);stroke:rgba(255,107,53,.95);filter:drop-shadow(0 1px 2px rgba(0,0,0,.16))}.anatomicalRegion.selected{fill:rgba(255,107,53,.52);stroke:#e85d2a;stroke-width:3}.anatomicalTooltip{position:absolute;z-index:5;pointer-events:none;display:none;background:#17202a;color:#fff;border-radius:9px;padding:7px 10px;font-size:12px;font-weight:800;box-shadow:0 6px 20px rgba(0,0,0,.2);white-space:nowrap;transform:translate(-50%,-120%)}.anatomicalMap .mapTitle{font-size:0}.anatomicalNote{font-size:11px;color:#77818c;text-align:center;margin-top:7px}
+@media(max-width:700px){.anatomicalMap{padding:4px!important}.anatomicalCanvas{width:100%}}
+
+/* V12 — mapa simplificado: as áreas clicáveis são máscaras extraídas dos próprios contornos coloridos da base, não polígonos desenhados por aproximação. */
+.simpleAnatomicalMap{display:flex;justify-content:center;align-items:center;background:#fff!important;padding:12px!important;border:1px solid #e5e9ee;border-radius:16px;overflow:hidden}.simpleAnatomicalCanvas{position:relative;width:min(100%,520px);margin:auto}.simpleAnatomicalCanvas img{display:block;width:100%;height:auto;filter:grayscale(1) contrast(.98);user-select:none}.simpleAnatomicalCanvas svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}.simpleRegion{fill:rgba(255,107,53,0);stroke:rgba(255,107,53,0);stroke-width:2;vector-effect:non-scaling-stroke;cursor:pointer;transition:fill .12s,stroke .12s,filter .12s}.simpleRegion:hover,.simpleRegion:focus{fill:rgba(255,107,53,.28);stroke:rgba(255,107,53,.95);filter:drop-shadow(0 1px 2px rgba(0,0,0,.16));outline:none}.simpleRegion.selected{fill:rgba(255,107,53,.58);stroke:#e85d2a;stroke-width:3}.simpleMapLabel{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);padding:6px 10px;border-radius:999px;background:#17202a;color:#fff;font-size:11px;font-weight:800;opacity:0;pointer-events:none;transition:opacity .12s;white-space:nowrap}.simpleMapLabel.show{opacity:1}
+@media(max-width:700px){.simpleAnatomicalMap{padding:4px!important}.simpleAnatomicalCanvas{width:100%}}
+</style>
+</head>
+<body>
+<header><div class="brand">Treino & Recuperação <span class="pill">V12</span></div><div class="sub">Mapa muscular interativo com base vetorial simplificada, seleção por contorno e métricas do treino.</div></header>
+<nav><div class="navin">
+<button class="active" data-tab="home">Hoje</button><button data-tab="plan">Treino</button><button data-tab="log">Registrar</button><button data-tab="progress">Progressão</button><button data-tab="recovery">Recuperação</button><button data-tab="body">Medidas</button><button data-tab="muscles">Músculos</button><button data-tab="data">Dados</button>
+</div></nav>
+<main>
+
+<section id="home" class="tab active">
+<div class="hero"><div class="between"><div><div class="label">RECUPERAÇÃO</div><div id="status" class="metric good">Sem check-in</div><div id="statusText" class="sub">Registre sono, energia e fadiga para personalizar.</div></div><div style="text-align:right"><div class="label">SCORE</div><div id="score" class="metric">--</div></div></div><div class="progress" style="margin-top:14px"><i id="scorebar" style="width:0%"></i></div></div>
+<div class="grid4" style="margin-top:13px"><div class="card"><div class="label">Peso</div><div id="hw" class="metric">77,6</div><div class="small">kg</div></div><div class="card"><div class="label">Cintura</div><div id="hc" class="metric">84,5</div><div class="small">cm acima do umbigo</div></div><div class="card"><div class="label">Volume 7d</div><div id="hv" class="metric">0</div><div class="small">kg externos</div></div><div class="card"><div class="label">Séries</div><div id="hs" class="metric">0</div><div class="small">últimos 7 dias</div></div></div>
+<div class="grid2" style="margin-top:13px"><div class="card"><h2>Próximo treino</h2><div id="next"></div></div><div class="card"><h2>Como interpretar a tonelagem</h2><div class="mutedbox">A tonelagem é calculada como <b>carga × repetições × lados</b>. Dropsets/rest-pause/myo-reps são somados por segmento. Conjugados e supersets mantêm cada exercício separado e também mostram o total do bloco.</div></div></div>
+</section>
+
+<section id="plan" class="tab">
+<div class="card"><div class="between"><h2>Treino semanal</h2><button class="btn secondary" onclick="openExerciseEditor()">+ Novo exercício</button></div><div id="planList"></div></div>
+<div class="card" style="margin-top:13px"><h2>Editor de exercício</h2><div id="editor"><div class="mutedbox">Clique em um exercício acima para editar.</div></div></div>
+</section>
+
+<section id="log" class="tab">
+<div class="card"><div class="between"><h2>Registrar treino</h2><span class="pill">várias séries de uma vez</span></div>
+<div class="grid2"><div><label>Exercício</label><select id="logEx" onchange="loadExerciseMeta()"></select></div><div><label>Data</label><input id="logDate" type="date"></div></div>
+<div id="techFields" class="section"></div>
+
+<div class="between" style="margin-top:14px"><h3 style="margin:0">Séries</h3><button class="btn secondary" onclick="addSetRow()">+ Adicionar série</button></div>
+<div id="setRows" style="margin-top:8px"></div>
+
+<label>Observação do exercício</label><textarea id="logNote" placeholder="ex.: última série caiu para 5 reps"></textarea>
+<button class="primary" style="margin-top:12px" onclick="saveLog()">Salvar treino</button>
+</div>
+<div class="card" style="margin-top:13px"><h2>Histórico recente</h2><div id="logHistory"></div></div>
+</section>
+
+<section id="progress" class="tab">
+<div class="grid2"><div class="card"><h2>Progressão</h2><label>Exercício</label><select id="progEx" onchange="drawProgress()"></select><canvas id="chart"></canvas></div><div class="card"><h2>Leitura</h2><div id="insight" class="mutedbox">Registre pelo menos 3 sessões.</div><div class="section"><b>Métricas</b><div id="metricRead" class="small" style="margin-top:7px"></div></div></div></div>
+</section>
+
+<section id="recovery" class="tab">
+<div class="grid2"><div class="card"><h2>Check-in</h2><label>Sono (h)</label><input id="rsleep" type="number" step=".1"><label>Energia (0–10)</label><input id="renergy" type="number" min="0" max="10"><label>Dor/fadiga (0–10)</label><input id="rsore" type="number" min="0" max="10"><label>Estresse (0–10)</label><input id="rstress" type="number" min="0" max="10"><label>Cardio ontem (min)</label><input id="rcardio" type="number" min="0"><label>FC repouso (opcional)</label><input id="rrhr" type="number"><button class="primary" style="margin-top:12px" onclick="saveRecovery()">Calcular</button></div><div class="card"><h2>Resultado</h2><div id="rscore" class="metric good">--</div><p id="rmsg" class="sub">Heurística de acompanhamento, não diagnóstico.</p></div></div>
+</section>
+
+<section id="body" class="tab">
+<div class="grid2"><div class="card"><h2>Nova medição</h2><label>Peso</label><input id="bw" type="number" step=".1" value="77.6"><label>Cintura acima do umbigo</label><input id="bc" type="number" step=".1" value="84.5"><label>Cintura no umbigo</label><input id="bn" type="number" step=".1" value="92"><label>Observação</label><input id="bo"><button class="primary" style="margin-top:12px" onclick="saveBody()">Salvar</button></div><div class="card"><h2>Medidas musculares</h2><table><tr><td>Ombros</td><td>123 cm</td></tr><tr><td>Peitoral</td><td>102 cm</td></tr><tr><td>Braço relaxado</td><td>34,5 cm</td></tr><tr><td>Braço contraído</td><td>37,5 cm</td></tr><tr><td>Antebraço</td><td>29 cm</td></tr><tr><td>Pescoço</td><td>40,5 cm</td></tr><tr><td>Coxa</td><td>57 cm</td></tr><tr><td>Panturrilha</td><td>40 cm</td></tr><tr><td>Biacromial</td><td>41 cm</td></tr></table></div></div>
+<div class="card" style="margin-top:13px"><h2>Histórico</h2><div id="bodyHistory"></div></div>
+</section>
+
+<section id="muscles" class="tab">
+<div class="card musclePage">
+  <div class="muscleHeader">
+    <div><h2 style="margin-bottom:4px">Mapa muscular</h2><div class="small">Selecione diretamente a região anatômica. A área clicável acompanha o contorno do músculo ilustrado.</div></div>
+    <div class="muscleViewTabs"><button id="muscleFrontBtn" class="muscleViewBtn activeMuscleView" onclick="setMuscleView('front')">FRONTAL</button><button id="muscleBackBtn" class="muscleViewBtn" onclick="setMuscleView('back')">POSTERIOR</button></div>
+  </div>
+  <div class="muscleLegend"><span><i class="dot primaryDot"></i> Clique em um músculo</span><span><i class="dot secondaryDot"></i> Hover destaca a área</span><span><i class="dot noneDot"></i> O painel mostra exercícios e métricas</span></div>
+  <div id="muscleSvgWrap" class="detailedMap anatomicalMap"></div>
+  <div class="muscleMapHint">As áreas de seleção ficam sobre os contornos anatômicos — não são círculos ou marcadores.</div>
+</div>
+<div class="grid2" style="margin-top:13px">
+  <div class="card"><div class="between"><h2>Porção selecionada</h2><span id="muscleSelectedTag" class="tag">Nenhuma</span></div><div id="muscleDetail" class="mutedbox">Clique em um músculo no desenho.</div></div>
+  <div class="card"><h2>Cobertura muscular</h2><div id="muscleList"></div></div>
+</div>
+</section>
+
+<section id="data" class="tab"><div class="card"><div class="between"><h2>Dados</h2><div class="row"><button class="btn secondary" onclick="exportData()">Exportar</button><label style="margin:0"><input id="importFile" type="file" accept=".json" onchange="importData(event)"></label></div></div><div class="small">O app salva no navegador. Exporte regularmente para backup.</div><div id="dataSummary" style="margin-top:12px"></div></div></section>
+</main><div id="toast" class="toast"></div>
+
+<script>
+const defaultPlan={
+"Segunda — Costas + tríceps + lateral":[["Puxada cross","costas"],["Remada pronada aberta","costas"],["Remada neutra","costas"],["Terra","costas"],["Tríceps francês","tríceps"],["Tríceps corda","tríceps"],["Elevação lateral polia","ombros"]],
+"Terça — Bike 30 min":[["Bicicleta ergométrica","cardio"]],
+"Quarta — Peito + bíceps + ombros":[["Supino 45° Smith","peito"],["Voador","peito"],["Crucifixo polia alta","peito"],["Bíceps polia com barra","bíceps"],["Bíceps martelo — dropset","bíceps"],["Remada alta","ombros"],["Elevação lateral conjugada","ombros"],["Bike 60 min","cardio"]],
+"Quinta — Bike 30 min":[["Bicicleta ergométrica","cardio"]],
+"Sexta — Costas + tríceps + face pull":[["Puxada cross","costas"],["Remada máquina neutra","costas"],["Pulldown barra","costas"],["Face pull","ombros"],["Tríceps coice","tríceps"],["Tríceps corda","tríceps"]],
+"Sábado — Peito + bíceps + ombros":[["Crucifixo cross polia baixa no banco 45°","peito"],["Voador","peito"],["Supino reto máquina","peito"],["Bíceps polia com barra","bíceps"],["Rosca bayesiana unilateral","bíceps"],["Remada alta polia","ombros"],["Elevação lateral polia","ombros"],["Esteira 20 min","cardio"],["Bike 60 min","cardio"]],
+"Domingo — Pernas + bike 60 min":[["Leg press 45°","pernas"],["Leg press horizontal unilateral","pernas"],["Cadeira extensora","pernas"],["Cadeira abdutora","pernas"],["Cadeira flexora","pernas"],["Elevação pélvica","pernas"],["Bike 60 min","cardio"]]
+};
+const defaultMeta={
+"Puxada cross":{type:"normal",sides:1}, "Remada pronada aberta":{type:"normal",sides:1},"Remada neutra":{type:"normal",sides:1},"Terra":{type:"normal",sides:1},
+"Tríceps francês":{type:"normal",sides:1},"Tríceps corda":{type:"normal",sides:1},"Elevação lateral polia":{type:"unilateral",sides:2},
+"Supino 45° Smith":{type:"normal",sides:1},"Voador":{type:"normal",sides:1},"Crucifixo polia alta":{type:"normal",sides:1},
+"Bíceps polia com barra":{type:"normal",sides:1},"Bíceps martelo — dropset":{type:"dropset",sides:2},
+"Remada alta":{type:"normal",sides:1},"Elevação lateral conjugada":{type:"conjugado",sides:2},
+"Bicicleta ergométrica":{type:"cardio",sides:1},"Remada máquina neutra":{type:"normal",sides:1},"Pulldown barra":{type:"normal",sides:1},
+"Face pull":{type:"normal",sides:1},"Tríceps coice":{type:"unilateral",sides:2},
+"Crucifixo cross polia baixa no banco 45°":{type:"normal",sides:1},"Supino reto máquina":{type:"normal",sides:1},
+"Rosca bayesiana unilateral":{type:"unilateral",sides:2},"Remada alta polia":{type:"normal",sides:1},
+"Esteira 20 min":{type:"cardio",sides:1},"Leg press 45°":{type:"normal",sides:1},"Leg press horizontal unilateral":{type:"unilateral",sides:2},
+"Cadeira extensora":{type:"normal",sides:1},"Cadeira abdutora":{type:"normal",sides:1},"Cadeira flexora":{type:"normal",sides:1},"Elevação pélvica":{type:"normal",sides:1},"Bike 60 min":{type:"cardio",sides:1}
+};
+let plan=JSON.parse(localStorage.getItem("v3_plan")||"null")||defaultPlan;
+let meta=JSON.parse(localStorage.getItem("v3_meta")||"null")||defaultMeta;
+let logs=JSON.parse(localStorage.getItem("v3_logs")||"[]"), bodies=JSON.parse(localStorage.getItem("v3_bodies")||"[]"), rec=JSON.parse(localStorage.getItem("v3_rec")||"null");
+const types={normal:"Normal",unilateral:"Unilateral",conjugado:"Conjugado",superset:"Superset",dropset:"Dropset",restpause:"Rest-pause",myoreps:"Myo-reps",cardio:"Cardio"};
+
+function saveAll(){localStorage.setItem("v3_plan",JSON.stringify(plan));localStorage.setItem("v3_meta",JSON.stringify(meta));localStorage.setItem("v3_logs",JSON.stringify(logs));localStorage.setItem("v3_bodies",JSON.stringify(bodies));}
+function go(id){document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x.dataset.tab===id));if(id==="progress")drawProgress();window.scrollTo({top:0,behavior:"smooth"})}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.tab));
+function toast(t){let x=document.getElementById("toast");x.textContent=t;x.style.display="block";setTimeout(()=>x.style.display="none",1800)}
+function allExercises(){return [...new Set(Object.values(plan).flat().map(x=>x[0]).filter(n=>!n.toLowerCase().includes("bike")&&!n.toLowerCase().includes("esteira")))];}
+function init(){logDate.value=new Date().toISOString().slice(0,10);renderAll();loadExerciseMeta();addSetRow();}
+function renderAll(){renderPlan();populateSelects();renderLogs();renderBodies();renderHome();renderMuscles();renderMuscleMap();renderData();drawProgress();}
+function renderPlan(){planList.innerHTML=Object.entries(plan).map(([day,arr])=>`<div class="day"><h3>${day}</h3>${arr.map((x,i)=>{let m=meta[x[0]]||{type:"normal",sides:1};return `<div class="exercise"><div class="between"><div><b>${i+1}. ${x[0]}</b> <span class="tag">${types[m.type]||m.type}</span></div><button class="btn secondary" onclick="editExercise('${esc(x[0])}')">Editar</button></div><div class="small">${x[1]} · ${m.sides===2?"2 lados":"bilateral/total"}${m.pairedWith?` · conjugado com ${m.pairedWith}`:""}</div></div>`}).join("")}</div>`).join("")}
+function populateSelects(){let ex=allExercises();logEx.innerHTML=ex.map(x=>`<option>${x}</option>`).join("");progEx.innerHTML=ex.map(x=>`<option>${x}</option>`).join("")}
+function esc(s){return s.replace(/'/g,"\\'").replace(/"/g,'&quot;')}
+function openExerciseEditor(name=""){let n=name||"";editor.innerHTML=`
+<div class="grid2"><div><label>Nome</label><input id="en" value="${n.replace(/"/g,"&quot;")}"></div><div><label>Grupo principal</label><select id="eg"><option>costas</option><option>peito</option><option>ombros</option><option>bíceps</option><option>tríceps</option><option>pernas</option><option>cardio</option></select></div></div>
+<div class="grid3"><div><label>Tipo</label><select id="et" onchange="renderTechniqueEditor()">${Object.entries(types).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></div><div><label>Lados</label><select id="es"><option value="1">1 / carga total</option><option value="2">2 / carga por lado</option></select></div><div><label>Exercício conjugado/superset</label><select id="ep"><option value="">Nenhum</option>${allExercises().filter(x=>x!==n).map(x=>`<option>${x}</option>`).join("")}</select></div></div>
+<div id="techEdit" class="section"></div>
+<div class="row" style="margin-top:12px"><button class="primary" onclick="saveExercise('${esc(n)}')">Salvar exercício</button>${n?`<button class="btn danger" onclick="deleteExercise('${esc(n)}')">Excluir</button>`:""}</div>`;
+if(n&&meta[n]){let m=meta[n];en.value=n;eg.value=findGroup(n);et.value=m.type||"normal";es.value=m.sides||1;ep.value=m.pairedWith||"";}renderTechniqueEditor();}
+function findGroup(n){for(const a of Object.values(plan))for(const x of a)if(x[0]===n)return x[1];return"costas"}
+function renderTechniqueEditor(){let t=et.value,box=document.getElementById("techEdit");if(["dropset","restpause","myoreps"].includes(t))box.innerHTML=`<b>${types[t]}</b><div class="small">No registro, você poderá adicionar segmentos com cargas/repetições diferentes. A tonelagem será a soma de cada segmento.</div>`;else if(t==="conjugado"||t==="superset")box.innerHTML=`<b>${types[t]}</b><div class="small">O bloco será composto por este exercício e o exercício pareado. Cada um terá sua tonelagem calculada separadamente e o app mostrará também o total do bloco.</div>`;else if(t==="unilateral")box.innerHTML=`<b>Unilateral</b><div class="small">A carga informada será considerada por lado. Com 2 lados, tonelagem = carga × reps × 2.</div>`;else box.innerHTML=`<b>Normal</b><div class="small">Tonelagem = carga × repetições × lados configurados.</div>`;}
+function saveExercise(old){let n=en.value.trim();if(!n){toast("Dê um nome ao exercício");return}if(old&&old!==n){for(const k in plan)plan[k]=plan[k].map(x=>x[0]===old?[n,x[1]]:x);if(meta[old]){meta[n]=meta[old];delete meta[old]}}let g=eg.value;let m={type:et.value,sides:+es.value,pairedWith:ep.value||""};meta[n]=m;if(!Object.values(plan).flat().some(x=>x[0]===n))plan["Segunda — Costas + tríceps + lateral"].push([n,g]);saveAll();renderAll();toast("Exercício salvo");}
+function deleteExercise(n){if(!confirm("Excluir o exercício do treino semanal?"))return;for(const k in plan)plan[k]=plan[k].filter(x=>x[0]!==n);delete meta[n];saveAll();editor.innerHTML='<div class="mutedbox">Exercício excluído.</div>';renderAll();}
+function editExercise(n){go("plan");openExerciseEditor(n)}
+function loadExerciseMeta(){let m=meta[logEx.value]||{type:"normal",sides:1};let t=m.type;techFields.innerHTML=`<div class="between"><b>${types[t]||t}</b><span class="tag">${m.sides===2?"carga por lado":"carga total"}</span></div>`;
+if(["dropset","restpause","myoreps"].includes(t))techFields.innerHTML+=`<div class="small" style="margin-top:8px">Registre o primeiro segmento abaixo. Depois use <b>+ segmento</b> para adicionar drops/rest-pause/myo-reps.</div><div id="segments"></div><button class="btn secondary" style="margin-top:8px" onclick="addSegment()">+ segmento</button>`;
+else if(t==="conjugado"||t==="superset")techFields.innerHTML+=`<div class="small" style="margin-top:8px">Pareado com: <b>${m.pairedWith||"nenhum — edite o exercício para escolher"}</b>. O exercício atual e o pareado são registrados separadamente.</div>`;
+else if(t==="unilateral")techFields.innerHTML+=`<div class="small" style="margin-top:8px">A carga é por lado. Se você fizer 10 repetições em cada lado, o cálculo usa ×2.</div>`;}
+function addSegment(){let box=document.getElementById("segments");let d=document.createElement("div");d.className="grid3 section";d.innerHTML=`<div><label>Carga</label><input class="sgLoad" type="number" step=".5"></div><div><label>Reps</label><input class="sgReps" type="number"></div><div><label>Nome</label><input class="sgName" placeholder="drop 1 / pausa"></div>`;box.appendChild(d)}
+function calcTon(load,reps,sides){return load*reps*sides}
+function addSetRow(load="", reps="", rir="1"){
+  const box=document.getElementById("setRows");
+  const n=box.children.length+1;
+  const d=document.createElement("div");
+  d.className="setrow";
+  d.innerHTML=`<div class="setnum">Série ${n}</div>
+    <div><label>Carga (kg)</label><input class="rowLoad" type="number" step=".5" value="${load}"></div>
+    <div><label>Reps</label><input class="rowReps" type="number" value="${reps}"></div>
+    <div><label>RIR</label><input class="rowRir" type="number" min="0" max="5" value="${rir}"></div>
+    <button class="remove" onclick="this.parentElement.remove();renumberRows()">×</button>`;
+  box.appendChild(d);
+}
+function renumberRows(){
+  [...document.querySelectorAll("#setRows .setrow")].forEach((r,i)=>r.querySelector(".setnum").textContent=`Série ${i+1}`);
+}
+function saveLog(){
+  const name=logEx.value,m=meta[name]||{type:"normal",sides:1},date=logDate.value, note=logNote.value;
+  const rows=[...document.querySelectorAll("#setRows .setrow")];
+  if(!rows.length){toast("Adicione pelo menos uma série");return}
+
+  // Advanced techniques keep their segment structure, while normal/unilateral
+  // exercises can save all entered sets together.
+  if(["dropset","restpause","myoreps"].includes(m.type)){
+    const segments=rows.map((r,i)=>({
+      load:+r.querySelector(".rowLoad").value,
+      reps:+r.querySelector(".rowReps").value,
+      name:i===0?"principal":`segmento ${i}`
+    }));
+    if(segments.some(x=>!x.load||!x.reps)){toast("Preencha carga e reps em todas as séries");return}
+    logs.unshift({date,exercise:name,type:m.type,sides:m.sides,rir:+rows[0].querySelector(".rowRir").value,note,segments});
+  } else {
+    if(rows.some(r=>!+r.querySelector(".rowLoad").value||!+r.querySelector(".rowReps").value)){
+      toast("Preencha carga e reps em todas as séries");return
+    }
+    rows.forEach(r=>{
+      logs.unshift({
+        date,exercise:name,type:m.type,sides:m.sides,
+        rir:+r.querySelector(".rowRir").value,
+        note,
+        load:+r.querySelector(".rowLoad").value,
+        reps:+r.querySelector(".rowReps").value
+      });
+    });
+  }
+  saveAll();
+  renderAll();
+  document.getElementById("setRows").innerHTML="";
+  addSetRow();
+  document.getElementById("logNote").value="";
+  toast(`${rows.length} série${rows.length>1?"s":""} salva${rows.length>1?"s":""}`);
+}
+function logT(l){if(l.segments)return l.segments.reduce((a,s)=>a+calcTon(s.load,s.reps,l.sides),0);return calcTon(l.load,l.reps,l.sides)}
+function renderLogs(){logHistory.innerHTML=logs.slice(0,40).map((l,i)=>`<div class="exercise"><div class="between"><b>${l.exercise}</b><span class="tag">${types[l.type]}</span></div><div>${l.segments?l.segments.map(s=>`${s.name}: ${s.load}×${s.reps}`).join(" · "):`${l.load} kg × ${l.reps}`} ${l.sides===2?"×2 lados":""}</div><div class="small">${l.date} · RIR ${l.rir} · Tonelagem: <b>${Math.round(logT(l)).toLocaleString("pt-BR")} kg</b>${l.note?` · ${l.note}`:""}</div></div>`).join("")||'<div class="small">Nenhum registro.</div>'}
+function renderHome(){let now=Date.now(),week=logs.filter(x=>now-new Date(x.date).getTime()<=7*86400000);let vol=week.reduce((a,x)=>a+logT(x),0);hv.textContent=Math.round(vol).toLocaleString("pt-BR");hs.textContent=week.length;if(bodies.length){hw.textContent=bodies[0].weight.toFixed(1).replace(".",",");hc.textContent=bodies[0].waist.toFixed(1).replace(".",",")}if(rec){score.textContent=rec.score;scorebar.style.width=rec.score+"%";let s=rec.score>=75?"Boa recuperação":rec.score>=55?"Recuperação moderada":"Recuperação baixa";status.textContent=s;status.className="metric "+(rec.score>=75?"good":rec.score>=55?"warn":"bad");statusText.textContent=rec.score>=75?"Treino planejado compatível.":rec.score>=55?"Mantenha a carga e controle o volume.":"Considere reduzir volume/intensidade se a fadiga estiver alta."}let k=Object.keys(plan)[Object.keys(plan).length-1];next.innerHTML=`<h3>${k}</h3>`+plan[k].map(x=>`<span class="tag">${x[0]}</span>`).join("");}
+function saveRecovery(){let s=+rsleep.value,e=+renergy.value,so=+rsore.value,st=+rstress.value,c=+rcardio.value,r=+rrhr.value||null;if([s,e,so,st,c].some(Number.isNaN)){toast("Preencha os campos");return}let v=50+Math.min(s,9)/9*18+e*2.4-so*2-st*1.6-Math.min(c/30,8);if(r)v-=Math.max(0,r-65)*.35;v=Math.round(Math.max(0,Math.min(100,v)));rec={date:new Date().toISOString().slice(0,10),sleep:s,energy:e,sore:so,stress:st,cardio:c,rhr:r,score:v};localStorage.setItem("v3_rec",JSON.stringify(rec));renderAll();toast("Recuperação atualizada");}
+function saveBody(){bodies.unshift({date:new Date().toISOString().slice(0,10),weight:+bw.value,waist:+bc.value,navel:+bn.value,note:bo.value});saveAll();renderAll();toast("Medição salva")}
+function renderBodies(){bodyHistory.innerHTML=bodies.length?`<table><tr><th>Data</th><th>Peso</th><th>Cintura</th><th>Umbigo</th><th>Obs.</th></tr>${bodies.slice(0,40).map(x=>`<tr><td>${x.date}</td><td>${x.weight}</td><td>${x.waist}</td><td>${x.navel}</td><td>${x.note||""}</td></tr>`).join("")}</table>`:'<div class="small">Nenhuma medição.</div>'}
+
+const muscleMap={
+front:[
+{id:'pec',name:'Peitoral maior',group:'Peitoral',ex:[['Supino 45° Smith','Primário'],['Supino reto máquina','Primário'],['Voador','Primário'],['Crucifixo polia alta','Primário'],['Crucifixo cross polia baixa no banco 45°','Primário']]},
+{id:'deltoid',name:'Deltoide',group:'Ombros',ex:[['Elevação lateral polia','Primário'],['Elevação lateral conjugada','Primário'],['Supino 45° Smith','Secundário'],['Remada alta','Secundário'],['Remada alta polia','Secundário']]},
+{id:'biceps',name:'Bíceps braquial',group:'Braços',ex:[['Bíceps polia com barra','Primário'],['Rosca bayesiana unilateral','Primário'],['Bíceps martelo — dropset','Secundário']]},
+{id:'forearm',name:'Antebraço',group:'Antebraço',ex:[['Bíceps martelo — dropset','Secundário'],['Bíceps polia com barra','Secundário']]},
+{id:'serratus',name:'Serrátil anterior',group:'Tronco',ex:[['Crucifixo polia alta','Secundário']]},
+{id:'abs',name:'Reto abdominal',group:'Abdômen',ex:[]},
+{id:'oblique',name:'Oblíquos',group:'Abdômen',ex:[]},
+{id:'rectus-femoris',name:'Reto femoral',group:'Quadríceps',ex:[['Leg press 45°','Primário'],['Leg press horizontal unilateral','Primário'],['Cadeira extensora','Primário']]},
+{id:'vastus-lateral',name:'Vasto lateral',group:'Quadríceps',ex:[['Leg press 45°','Primário'],['Leg press horizontal unilateral','Primário'],['Cadeira extensora','Primário']]},
+{id:'vastus-medial',name:'Vasto medial',group:'Quadríceps',ex:[['Leg press 45°','Primário'],['Leg press horizontal unilateral','Primário'],['Cadeira extensora','Primário']]},
+{id:'adductors',name:'Adutores',group:'Coxa',ex:[['Leg press 45°','Secundário'],['Cadeira abdutora','Secundário']]},
+{id:'tibialis',name:'Tibial anterior',group:'Perna',ex:[]}
+],
+back:[
+{id:'traps',name:'Trapézio superior',group:'Costas',ex:[['Remada alta','Primário'],['Remada alta polia','Primário'],['Terra','Secundário']]},
+{id:'midtrap',name:'Trapézio médio / romboides',group:'Costas',ex:[['Remada pronada aberta','Primário'],['Remada neutra','Primário'],['Remada máquina neutra','Primário'],['Face pull','Secundário']]},
+{id:'lowertrap',name:'Trapézio inferior',group:'Costas',ex:[['Face pull','Secundário'],['Remada pronada aberta','Secundário']]},
+{id:'rear-delt',name:'Deltoide posterior',group:'Ombros',ex:[['Remada pronada aberta','Primário'],['Face pull','Primário']]},
+{id:'lats',name:'Latíssimo do dorso',group:'Dorsal',ex:[['Puxada cross','Primário'],['Pulldown barra','Primário'],['Remada neutra','Secundário'],['Remada máquina neutra','Secundário']]},
+{id:'teres',name:'Redondo maior',group:'Dorsal',ex:[['Puxada cross','Secundário'],['Pulldown barra','Secundário']]},
+{id:'triceps',name:'Tríceps',group:'Tríceps',ex:[['Tríceps francês','Primário'],['Tríceps corda','Primário'],['Tríceps coice','Primário']]},
+{id:'forearm',name:'Antebraço',group:'Antebraço',ex:[['Bíceps martelo — dropset','Secundário']]},
+{id:'erectors',name:'Eretores da coluna',group:'Lombar',ex:[['Terra','Primário']]},
+{id:'glutes',name:'Glúteo máximo',group:'Glúteos',ex:[['Elevação pélvica','Primário'],['Leg press 45°','Secundário'],['Leg press horizontal unilateral','Secundário']]},
+{id:'hamstrings',name:'Posterior de coxa',group:'Posterior de coxa',ex:[['Cadeira flexora','Primário'],['Terra','Secundário']]},
+{id:'calves',name:'Gastrocnêmio / panturrilha',group:'Panturrilha',ex:[]}
+]};
+let currentMuscleView='front', selectedMuscle=null;
+function exerciseExists(name){return allExercises().includes(name)}
+function setMuscleView(view){currentMuscleView=view;selectedMuscle=null;document.getElementById('muscleFrontBtn').classList.toggle('activeMuscleView',view==='front');document.getElementById('muscleBackBtn').classList.toggle('activeMuscleView',view==='back');renderMuscleMap()}
+
+/* Anatomical model: the base illustration is split into two clean views. Each hotspot is a path drawn over the actual muscle contour, not a generic marker. */
+const anatomy={
+front:{src:'front_model.png',w:640,h:1024,regions:{
+'pec':{paths:[`M216 196 C239 184 279 186 316 202 C322 221 320 251 312 274 C286 285 251 278 225 258 C215 244 211 218 216 196 Z`],mirror:true},
+'deltoid':{paths:[`M175 185 C190 170 216 169 237 179 C252 188 260 205 258 222 C251 241 240 257 225 267 C208 260 192 247 181 231 C174 216 171 199 175 185 Z`],mirror:true},
+'biceps':{paths:[`M226 250 C241 244 260 250 274 264 C282 284 281 316 274 340 C268 358 256 369 243 366 C231 358 226 340 225 319 C224 293 224 268 226 250 Z`],mirror:true},
+'forearm':{paths:[`M118 349 C124 341 135 337 146 341 C157 345 169 353 177 365 C181 377 180 391 176 405 C170 424 161 443 150 459 C141 474 132 489 124 497 C117 493 111 484 108 473 C106 462 108 447 111 432 C114 417 117 401 119 386 C117 372 116 359 118 349 Z`],mirror:true},
+'serratus':{paths:[`M250 282 C264 281 278 290 286 305 L286 366 C279 380 268 391 258 396 C250 376 247 350 247 326 C247 308 248 293 250 282 Z`],mirror:true},
+'abs':{paths:[`M286 282 C297 276 310 277 320 284 L320 504 C309 512 294 512 282 502 L282 288 C283 285 284 283 286 282 Z`,`M320 284 C330 277 343 276 354 282 C356 283 357 285 358 288 L358 502 C346 512 331 512 320 504 Z`]},
+'oblique':{paths:[`M262 344 C274 343 283 351 287 365 L287 434 C280 453 270 462 258 457 C250 438 248 411 249 389 C250 370 254 353 262 344 Z`],mirror:true},
+'rectus-femoris':{paths:[`M284 493 C297 491 308 500 316 514 L316 633 C308 653 297 661 286 655 C278 635 276 606 278 571 C279 538 281 511 284 493 Z`],mirror:true},
+'vastus-lateral':{paths:[`M230 506 C246 497 266 503 278 520 C279 558 275 607 267 642 C260 665 248 678 234 669 C221 644 216 607 216 570 C216 541 221 518 230 506 Z`],mirror:true},
+'vastus-medial':{paths:[`M316 513 C328 501 343 500 356 510 C365 531 369 561 367 593 C365 627 358 651 347 665 C335 670 324 660 316 643 Z`],mirror:true},
+'adductors':{paths:[`M273 486 C287 486 302 497 311 514 L311 565 C302 576 289 575 277 561 C267 543 264 511 273 486 Z`],mirror:true},
+'tibialis':{paths:[`M240 704 C254 696 268 702 277 717 L277 826 C269 852 257 883 245 905 C233 898 229 877 230 847 C231 807 234 756 240 704 Z`],mirror:true}
+}},
+back:{src:'back_model.png',w:630,h:1024,regions:{
+// trapezius: broad upper/central sheet from neck to scapulae
+' traps':{paths:[`M164 176 C193 158 225 143 271 126 L315 147 L315 214 C287 209 258 207 230 218 C204 228 181 226 163 213 C154 201 155 186 164 176 Z`],mirror:true},
+// middle traps/rhomboids: between the scapulae, not the arm or lat
+'midtrap':{paths:[`M235 205 C258 193 287 190 315 198 L315 309 C293 304 271 292 252 276 C239 261 233 233 235 205 Z`],mirror:true},
+'lowertrap':{paths:[`M285 263 C296 246 306 233 315 222 C324 233 334 246 345 263 L338 358 L315 386 L292 358 Z`]},
+'rear-delt':{paths:[`M162 181 C180 168 204 166 225 177 C241 187 247 205 243 222 C235 241 218 254 200 258 C183 250 171 237 164 221 C158 208 158 192 162 181 Z`],mirror:true},
+// teres major is the small muscle immediately below rear delt and above lat
+' teres':{paths:[`M208 239 C224 235 242 241 255 252 C265 263 270 276 268 287 C252 291 236 285 223 276 C214 267 208 253 208 239 Z`],mirror:true},
+// latissimus is the large fan-shaped muscle running from armpit down toward the waist
+'lats':{paths:[`M222 269 C239 260 259 261 278 274 C292 294 299 321 296 349 C292 379 281 407 264 421 C248 427 232 416 220 398 C211 376 207 348 209 321 C211 299 216 281 222 269 Z`],mirror:true},
+// triceps belongs to the posterior upper arm, lateral to the lat — not on the back itself
+' triceps':{paths:[`M194 247 C208 241 224 247 234 259 C241 274 240 298 235 319 C231 339 224 357 214 368 C203 371 193 362 188 348 C186 329 187 307 188 286 C188 268 190 255 194 247 Z`],mirror:true},
+'forearm':{paths:[`M105 340 C124 334 146 345 159 362 C166 382 162 407 153 431 C144 456 132 481 117 496 C103 491 91 475 90 457 C93 430 100 400 102 379 C101 361 101 348 105 340 Z`],mirror:true},
+'erectors':{paths:[`M297 229 C305 220 315 220 323 229 C330 243 331 269 330 299 L330 414 C323 432 316 443 307 451 C299 440 294 423 294 405 L294 264 C294 248 294 237 297 229 Z`]},
+'glutes':{paths:[`M211 416 C232 404 263 405 292 420 C303 442 302 482 293 511 C281 531 257 538 232 531 C214 516 205 485 205 455 C205 439 207 425 211 416 Z`],mirror:true},
+'hamstrings':{paths:[`M210 531 C228 524 248 530 260 545 L260 658 C253 689 243 715 230 728 C216 722 207 700 204 671 L202 575 C202 556 205 541 210 531 Z`],mirror:true},
+'calves':{paths:[`M217 699 C232 689 249 697 260 714 L260 786 C253 810 241 829 226 831 C212 818 205 798 204 777 C204 747 208 718 217 699 Z`],mirror:true}
+}}};
+// Normalize internal ids used by the muscle data.
+anatomy.back.regions['traps']=anatomy.back.regions[' traps']; delete anatomy.back.regions[' traps'];
+anatomy.back.regions['teres']=anatomy.back.regions[' teres']; delete anatomy.back.regions[' teres'];
+anatomy.back.regions['triceps']=anatomy.back.regions[' triceps']; delete anatomy.back.regions[' triceps'];
+function mirrorPath(d,w){return d.replace(/^/,`M 0 0 `).replace(/$/,'').replace(/^M 0 0 /,'').trim()}
+function buildAnatomySVG(view){const a=anatomy[view];let paths='';for(const [id,r] of Object.entries(a.regions)){for(const d of r.paths){paths+=`<path class="anatomicalRegion" data-muscle="${id}" d="${d}" tabindex="0" aria-label="${(muscleMap[view].find(m=>m.id===id)||{}).name||id}"></path>`;if(r.mirror)paths+=`<path class="anatomicalRegion" data-muscle="${id}" d="${d}" transform="translate(${a.w} 0) scale(-1 1)" tabindex="0" aria-label="${(muscleMap[view].find(m=>m.id===id)||{}).name||id}"></path>`}}
+return `<div class="anatomicalCanvas"><img src="${a.src}" alt="Mapa anatômico ${view==='front'?'frontal':'posterior'}"><svg viewBox="0 0 ${a.w} ${a.h}" preserveAspectRatio="none" aria-label="Regiões musculares selecionáveis">${paths}</svg><div class="anatomicalTooltip" id="anatomicalTooltip"></div></div>`}
+function renderMuscleMap(){const wrap=document.getElementById('muscleSvgWrap');if(!wrap)return;wrap.innerHTML=buildAnatomySVG(currentMuscleView);const tip=wrap.querySelector('#anatomicalTooltip');wrap.querySelectorAll('.anatomicalRegion').forEach(el=>{el.classList.toggle('selected',el.dataset.muscle===selectedMuscle);const show=()=>{const m=(muscleMap[currentMuscleView]||[]).find(x=>x.id===el.dataset.muscle);if(!m||!tip)return;tip.textContent=m.name;tip.style.display='block';const r=wrap.querySelector('.anatomicalCanvas').getBoundingClientRect();const b=el.getBoundingClientRect();tip.style.left=(b.left+b.width/2-r.left)+'px';tip.style.top=(b.top-r.top)+'px'};const hide=()=>{if(tip)tip.style.display='none'};el.addEventListener('mouseenter',show);el.addEventListener('mouseleave',hide);el.addEventListener('focus',show);el.addEventListener('blur',hide);el.addEventListener('click',()=>selectMuscle(el.dataset.muscle));el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectMuscle(el.dataset.muscle)}})});renderMuscleDetail()}
+function selectMuscle(id){selectedMuscle=id;renderMuscleMap()}
+function recentDays(n=7){const now=new Date();now.setHours(23,59,59,999);const start=new Date(now);start.setDate(start.getDate()-n+1);start.setHours(0,0,0,0);return {start,end:now}}
+function exerciseStat(name){const all=logs.filter(l=>l.exercise===name).slice();const {start,end}=recentDays(7);const week=all.filter(l=>{const d=new Date(l.date+'T23:59:59');return d>=start&&d<=end});const sessionMap=new Map();for(const l of all){if(!sessionMap.has(l.date))sessionMap.set(l.date,[]);sessionMap.get(l.date).push(l)}const sessionDates=[...sessionMap.keys()].sort();const sessionValue=date=>sessionMap.get(date).reduce((a,l)=>a+logT(l),0);const sessions=sessionDates.map(d=>({date:d,value:sessionValue(d)}));const recent=sessions.slice(-3),previous=sessions.slice(-6,-3);let trend=null;if(previous.length>=2&&recent.length>=2){const a=previous.reduce((x,y)=>x+y.value,0)/previous.length;const b=recent.reduce((x,y)=>x+y.value,0)/recent.length;trend=a?((b/a)-1)*100:0}const series=week.reduce((a,l)=>a+(l.segments?l.segments.length:1),0);const ton=week.reduce((a,l)=>a+logT(l),0);const latest=all.length?all.sort((a,b)=>new Date(b.date)-new Date(a.date))[0]:null;let load=null,reps=null;if(latest){if(latest.segments&&latest.segments.length){load=latest.segments[0].load;reps=latest.segments[0].reps}else{load=latest.load;reps=latest.reps}}return {week,series,ton,latest,load,reps,trend,sessions}}
+function formatTonnage(v){if(v>=1000)return (v/1000).toFixed(1).replace('.',',')+' t';return Math.round(v).toLocaleString('pt-BR')+' kg'}
+function renderMuscleDetail(){const box=document.getElementById('muscleDetail');const tag=document.getElementById('muscleSelectedTag');if(!box)return;const m=(muscleMap[currentMuscleView]||[]).find(x=>x.id===selectedMuscle);if(!m){if(tag)tag.textContent='Nenhuma';box.innerHTML='<div class="small">Clique em uma região do mapa para ver os exercícios relacionados.</div>';return}if(tag)tag.textContent=m.group;const active=m.ex.filter(x=>exerciseExists(x[0]));if(!active.length){box.innerHTML=`<div class="muscleDetail"><h3>${m.name}</h3><div class="small">Nenhum exercício direto cadastrado para esta porção no treino atual.</div><div class="mutedbox" style="margin-top:10px">Você pode adicionar um exercício específico ao treino e depois vinculá-lo a esta região.</div></div>`;return}const stats=active.map(x=>({name:x[0],role:x[1],s:exerciseStat(x[0])}));const totalSeries=stats.reduce((a,x)=>a+x.s.series,0),totalTon=stats.reduce((a,x)=>a+x.s.ton,0);const dates=stats.flatMap(x=>x.s.week.map(l=>l.date));const lastDate=dates.length?dates.sort().slice(-1)[0]:null;const trends=stats.map(x=>x.s.trend).filter(v=>v!==null);const avgTrend=trends.length?trends.reduce((a,b)=>a+b,0)/trends.length:null;box.innerHTML=`<div class="muscleDetail"><div class="between"><div><h3>${m.name}</h3><div class="small">Últimos 7 dias · porção específica</div></div><span class="tag">${active.length} exercício${active.length>1?'s':''}</span></div><div class="muscleStats"><div class="muscleStat"><b>${totalSeries}</b><span>séries/blocos</span></div><div class="muscleStat"><b>${formatTonnage(totalTon)}</b><span>tonelagem</span></div><div class="muscleStat"><b>${lastDate||'—'}</b><span>último registro</span></div><div class="muscleStat"><b>${avgTrend===null?'—':(avgTrend>0?'+':'')+avgTrend.toFixed(1).replace('.',',')+'%'}</b><span>evolução média</span></div></div>${stats.map(x=>{const s=x.s;return `<div class="muscleExercise"><div class="between"><div><b>${x.name}</b> <span class="muscleRole">${x.role}</span></div>${s.series?`<span class="tag">${s.series} série${s.series>1?'s':''} / 7d</span>`:''}</div><div class="muscleExerciseStats"><div><b>${s.load!==null?`${s.load} kg × ${s.reps}`:'—'}</b>última carga × reps</div><div><b>${formatTonnage(s.ton)}</b>volume 7d</div><div><b>${s.latest?s.latest.date:'—'}</b>última sessão</div><div><b>${s.trend===null?'—':(s.trend>0?'+':'')+s.trend.toFixed(1).replace('.',',')+'%'}</b>${s.trend===null?'evolução':'vs. sessões anteriores'}</div></div></div>`}).join('')}</div>`}
+function renderMuscles(){let groups={};(muscleMap.front.concat(muscleMap.back)).forEach(m=>{groups[m.group]=(groups[m.group]||0)+1});const planNames=new Set(allExercises());muscleList.innerHTML=Object.entries(groups).map(([k,v])=>`<div class="exercise"><div class="between"><b>${k}</b><span class="tag">${v} porç${v===1?'ão':'ões'}</span></div><div class="small">Mapa detalhado por região muscular</div></div>`).join('')}
+function drawProgress(){let c=document.getElementById("chart");if(!c)return;let ex=progEx.value,d=logs.filter(x=>x.exercise===ex).slice().reverse(),ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);if(!d.length){ctx.fillStyle="#99a5b3";ctx.fillText("Registre séries para gerar o gráfico.",20,30);metricRead.textContent="";insight.textContent="Registre pelo menos 3 sessões.";return}let vals=d.map(logT),min=Math.min(...vals)*.9,max=Math.max(...vals)*1.1;ctx.strokeStyle="#2b3440";for(let i=0;i<5;i++){let y=20+i*45;ctx.beginPath();ctx.moveTo(30,y);ctx.lineTo(c.width-20,y);ctx.stroke()}ctx.strokeStyle="#67a9ff";ctx.lineWidth=3;ctx.beginPath();d.forEach((x,i)=>{let xx=35+i*(c.width-60)/Math.max(1,d.length-1),yy=205-(vals[i]-min)/(max-min)*170;i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)});ctx.stroke();if(d.length>=3){let recent=vals.slice(-3).reduce((a,b)=>a+b,0)/3,old=vals.slice(0,Math.min(3,vals.length)).reduce((a,b)=>a+b,0)/Math.min(3,vals.length),pct=(recent/old-1)*100;metricRead.textContent=`Média recente: ${Math.round(recent).toLocaleString("pt-BR")} kg · média inicial: ${Math.round(old).toLocaleString("pt-BR")} kg · variação: ${pct.toFixed(1)}%`;insight.textContent=pct>5?"Tendência positiva no volume externo. Tente progressão gradual, sem exigir recorde em todas as sessões.":pct<-5?"A média recente caiu. Isso pode ser fadiga, ordem dos exercícios ou variação normal; observe mais sessões antes de concluir regressão.":"Performance relativamente estável. Priorize execução e progressão por reps antes de aumentar carga."}}
+function renderData(){dataSummary.innerHTML=`<div class="grid3"><div class="mutedbox"><b>${logs.length}</b><br>séries/blocos</div><div class="mutedbox"><b>${bodies.length}</b><br>medições</div><div class="mutedbox"><b>${allExercises().length}</b><br>exercícios</div></div>`}
+function exportData(){let a=document.createElement("a"),blob=new Blob([JSON.stringify({version:7,plan,meta,logs,bodies,recovery:rec},null,2)],{type:"application/json"});a.href=URL.createObjectURL(blob);a.download="treino-recuperacao-v7-backup.json";a.click();URL.revokeObjectURL(a.href)}
+function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(d.plan)plan=d.plan;if(d.meta)meta=d.meta;if(d.logs)logs=d.logs;if(d.bodies)bodies=d.bodies;if(d.recovery)rec=d.recovery;saveAll();if(rec)localStorage.setItem("v3_rec",JSON.stringify(rec));renderAll();toast("Backup importado")}catch(err){toast("Arquivo inválido")}};r.readAsText(f)}
+
+// ===== V12: base simplificada + máscaras reais dos contornos =====
+const simpleRegions = {"front":{"pec":["M 106,189 99,208 84,231 101,223 129,216 159,216 174,219 184,224 181,225 177,223 161,220 132,220 131,221 120,222 107,225 91,231 83,235 80,238 79,242 83,245 93,258 106,271 115,277 126,282 137,285 160,286 161,285 170,285 181,281 184,278 186,272 186,228 184,226 185,225 184,214 180,205 175,200 169,197 154,193 141,192 137,190 130,190 129,189 118,189 117,188 108,188 Z","M 272,188 261,188 260,189 242,190 237,192 224,193 208,198 198,206 194,218 193,241 192,242 192,270 194,277 197,281 203,284 215,285 216,286 240,285 255,281 271,272 287,256 291,250 300,242 300,240 290,232 272,225 254,221 216,220 202,223 198,225 196,224 200,221 214,217 234,216 235,215 236,216 249,216 250,217 266,219 278,223 294,231 283,213 274,194 274,190 Z"],"deltoid":["M 100,188 96,187 76,187 72,188 57,196 50,203 46,209 39,225 36,241 36,252 35,253 33,250 33,247 34,259 39,275 78,234 90,216 101,196 102,191 Z","M 278,189 277,192 280,200 297,229 306,241 338,273 339,270 342,268 345,251 344,253 342,250 342,236 340,226 336,215 330,205 319,194 307,188 303,187 282,187 Z"],"biceps":["M 105,330 103,333 103,343 104,344 104,351 106,361 112,372 132,396 131,398 107,369 106,370 106,375 104,382 104,391 103,392 105,409 108,415 123,433 131,439 158,464 157,458 152,445 146,418 143,411 140,408 141,406 144,409 144,403 143,402 139,369 132,357 Z","M 276,330 271,332 263,339 246,357 239,368 236,384 236,390 235,391 235,397 234,398 234,406 233,407 234,408 235,407 236,409 231,418 226,441 219,464 247,439 265,421 271,413 274,402 274,386 273,385 273,378 271,369 257,387 247,397 246,395 262,377 272,361 274,351 274,344 275,343 275,331 Z"],"forearm":["M 16,359 13,359 11,361 0,379 0,446 6,433 4,434 3,432 12,420 24,396 24,391 25,390 24,376 20,364 Z","M 362,359 358,363 353,379 354,398 362,415 374,433 373,435 371,434 373,441 387,470 393,479 393,471 387,445 386,417 385,416 385,407 382,393 372,369 364,359 Z","M 53,376 45,379 38,384 31,391 27,398 22,413 10,438 0,463 0,477 1,476 2,477 0,481 0,485 12,462 37,428 46,410 52,389 Z","M 324,376 326,393 329,405 338,426 360,458 367,464 377,477 381,485 378,470 372,452 354,412 349,396 342,387 333,380 326,376 Z"],"abs":["M 185,290 184,289 163,289 162,290 142,291 138,295 137,305 140,309 142,309 144,307 159,300 179,294 185,294 Z","M 193,290 194,295 202,295 216,299 233,307 237,310 240,308 241,299 239,294 235,291 215,290 214,289 198,289 197,288 Z","M 185,300 182,298 176,298 163,302 143,311 140,314 138,319 139,332 141,337 144,340 151,340 183,332 186,328 186,302 Z","M 193,300 191,319 192,320 192,328 196,333 210,335 227,340 235,339 237,336 239,328 239,318 238,315 234,311 217,303 202,298 195,298 Z","M 182,338 175,338 163,342 146,344 142,349 142,362 145,372 150,376 166,376 167,375 177,375 183,373 186,369 186,343 Z","M 193,341 191,351 191,361 192,362 192,369 196,374 208,375 209,376 227,376 231,374 234,369 235,357 236,356 236,350 235,347 232,344 216,342 203,338 197,338 Z","M 147,381 146,383 146,392 147,393 148,403 152,411 154,412 181,412 185,409 186,407 186,385 183,380 181,379 175,379 174,380 153,380 150,379 Z","M 196,379 193,382 191,389 191,405 192,408 195,411 198,412 222,412 227,408 230,400 230,395 231,394 231,383 228,379 224,380 Z","M 153,414 151,418 152,427 162,462 168,473 176,481 182,484 186,484 186,420 183,416 166,417 Z","M 224,414 214,417 195,416 192,419 191,422 191,484 196,484 204,479 213,466 220,447 226,422 226,416 Z"],"oblique":["M 105,305 105,312 107,320 114,334 129,351 137,356 137,340 134,325 132,321 115,308 108,306 107,305 108,304 Z","M 273,307 268,306 263,308 245,323 241,340 241,357 266,332 273,313 Z"],"rectus-femoris":["M 167,494 166,496 165,517 164,518 164,528 163,529 162,551 161,552 161,577 163,585 163,593 164,594 164,602 166,612 166,623 167,624 179,582 183,556 184,555 185,538 186,537 186,506 177,503 Z","M 210,496 201,503 190,507 191,509 190,510 190,529 191,530 191,544 192,545 194,567 202,601 208,618 209,626 212,593 213,592 215,571 216,570 216,553 215,552 214,529 213,528 212,507 211,506 Z"],"vastus-lateral":["M 264,438 258,445 274,509 277,532 278,533 278,541 279,542 279,582 278,583 278,590 274,608 266,627 266,643 272,661 278,668 281,669 283,661 290,651 289,649 293,639 299,609 300,584 301,583 300,552 292,512 287,500 282,482 281,483 277,477 280,474 281,476 278,456 277,455 273,456 268,455 267,457 263,450 264,447 268,447 274,444 275,445 274,439 272,438 270,441 267,441 Z","M 118,443 114,448 112,449 111,448 108,452 106,453 101,452 100,453 98,466 96,471 94,487 83,517 79,533 77,552 76,553 76,598 77,599 78,614 87,651 93,661 95,668 98,668 102,663 106,655 110,639 110,627 102,608 98,589 98,582 97,581 97,543 98,542 98,534 99,533 103,507 107,495 107,491 115,462 115,458 118,450 118,445 119,444 Z"],"vastus-medial":["M 140,528 139,531 138,578 137,579 137,593 136,594 136,606 135,607 135,618 134,619 134,637 135,638 135,651 136,652 136,658 139,673 141,678 143,679 150,672 157,653 158,639 159,638 159,611 158,610 158,600 157,599 157,592 156,591 154,574 145,541 Z","M 237,528 229,550 229,553 222,575 220,591 219,592 219,599 218,600 218,608 217,609 217,639 218,640 219,653 222,664 226,672 233,679 236,674 238,659 240,653 240,646 241,645 241,609 240,608 239,582 238,581 Z"],"adductors":["M 130,454 131,455 135,481 143,513 153,543 153,546 157,555 158,561 160,525 161,524 161,496 156,483 151,476 Z","M 246,455 227,475 220,485 216,496 216,531 217,532 218,558 220,556 235,509 237,497 243,475 Z"],"tibialis":["M 88,717 83,726 77,745 76,755 75,756 74,778 75,779 76,795 94,856 99,879 100,849 101,848 101,822 102,821 102,768 101,767 101,759 98,743 92,724 Z","M 143,719 141,720 141,722 136,729 124,752 123,756 121,758 118,770 117,782 116,783 116,795 115,796 116,809 115,810 115,825 114,826 114,841 113,842 113,870 115,852 117,848 117,844 123,824 131,813 133,812 135,806 141,797 146,782 147,758 146,757 146,749 143,733 Z","M 232,719 232,731 231,732 229,756 228,757 229,784 232,794 240,808 241,812 243,813 247,820 251,824 258,850 260,866 259,791 258,790 257,773 254,760 247,746 247,744 236,724 Z","M 288,718 286,719 279,737 274,758 273,773 272,774 272,820 273,821 274,880 283,845 294,812 300,783 300,757 299,756 299,751 296,738 Z"]},"back":{"traps":["M 195,98 191,98 184,101 176,108 174,114 174,122 170,135 164,145 152,157 153,158 152,159 141,162 111,177 102,184 107,186 123,188 129,190 148,192 172,198 181,197 186,189 187,178 184,169 180,166 181,165 184,166 188,162 190,157 191,146 192,145 192,136 193,135 Z","M 204,98 204,115 205,116 207,150 210,160 214,165 217,166 211,177 211,185 215,195 218,198 223,199 236,195 263,191 280,187 285,187 296,184 295,182 289,178 255,161 246,159 245,158 246,156 234,144 230,137 225,123 225,115 223,109 214,101 207,98 Z"],"midtrap":["M 121,201 113,196 106,194 95,193 90,196 89,195 90,192 79,191 69,194 58,202 48,216 42,234 41,252 40,253 42,273 55,263 64,259 75,252 92,239 110,220 119,207 Z","M 277,201 280,209 287,219 307,240 330,257 345,265 355,273 357,272 358,246 357,245 357,238 355,229 348,212 337,199 324,192 312,191 308,192 309,194 308,195 304,193 296,193 285,196 Z","M 124,206 110,226 97,240 96,243 111,249 130,262 136,264 141,264 148,261 152,256 133,215 126,206 Z","M 274,206 272,206 265,214 246,254 246,258 249,261 255,264 265,263 283,251 298,245 302,242 288,226 Z"],"lowertrap":["M 122,195 122,197 131,207 137,217 146,235 146,237 163,269 185,304 191,311 193,306 194,292 195,291 196,259 195,258 195,245 194,244 193,231 188,215 178,205 165,200 150,197 144,197 143,196 136,196 135,195 Z","M 277,195 256,196 231,201 219,206 211,214 206,227 204,244 203,245 203,254 202,255 202,286 203,287 204,302 207,311 223,288 239,262 263,213 267,207 277,197 Z"],"rear-delt":["M 85,253 76,256 72,260 67,272 66,268 68,264 68,261 51,271 43,279 32,304 30,314 30,319 31,320 30,357 33,350 35,348 36,349 35,347 37,346 38,340 43,329 52,316 57,305 58,306 58,313 59,314 53,319 47,328 43,338 41,348 41,367 43,373 46,376 49,376 53,373 60,361 64,348 66,345 69,331 69,325 71,319 74,316 75,317 74,325 71,329 70,341 63,361 55,375 67,367 75,358 83,345 91,326 94,314 94,306 91,297 84,309 80,313 79,312 84,305 90,290 90,284 89,283 Z","M 313,253 313,258 307,287 315,307 314,308 312,306 306,294 303,309 305,320 317,349 326,362 335,370 339,372 331,351 327,332 327,326 325,323 326,322 323,319 326,318 329,320 331,340 337,360 345,375 350,377 355,373 357,365 356,343 350,326 345,319 338,313 340,310 341,305 343,312 351,323 359,337 361,347 362,346 363,347 362,350 363,349 365,352 364,355 366,359 366,357 367,356 368,357 367,361 368,360 368,328 367,327 367,312 365,307 364,299 360,288 355,279 347,271 331,262 329,262 330,263 329,268 324,258 318,254 317,255 Z"],"teres":["M 113,279 125,290 136,297 138,297 145,301 176,309 179,309 181,306 180,301 177,298 160,267 156,262 153,262 125,276 Z","M 284,279 270,275 247,263 242,262 224,292 218,300 217,307 218,309 230,308 255,300 268,293 Z"],"lats":["M 96,279 95,280 95,288 100,309 108,331 116,347 134,374 152,392 156,393 164,373 178,315 174,312 170,312 147,306 132,299 107,279 Z","M 302,279 293,279 287,281 270,296 251,306 238,310 224,312 220,314 220,320 222,324 228,351 230,355 232,367 238,386 242,394 247,391 261,376 271,363 282,345 293,322 298,307 303,285 303,280 Z"],"triceps":["M 28,363 20,368 12,376 6,384 0,396 0,452 15,416 25,387 27,376 29,372 29,364 Z","M 368,363 369,364 370,377 382,414 397,452 409,476 409,455 406,444 403,416 397,395 391,383 385,375 377,367 371,363 Z","M 340,381 339,387 343,405 352,425 367,448 380,461 388,473 398,484 399,483 398,477 388,448 376,419 373,416 374,415 371,412 372,411 370,410 371,409 369,408 370,407 368,406 369,405 368,406 366,403 367,402 366,403 364,400 365,399 364,400 360,395 361,394 360,395 357,392 358,391 357,390 356,391 354,389 353,391 344,382 Z","M 58,382 54,382 52,385 47,388 37,398 36,397 34,399 33,398 34,399 32,402 31,401 32,405 29,407 28,406 29,408 28,409 27,408 28,409 26,410 27,411 25,412 26,413 24,414 25,415 23,416 24,417 21,420 22,422 21,423 20,422 21,424 19,425 20,426 18,427 12,442 10,450 2,470 2,473 0,477 0,483 2,483 13,467 29,449 45,425 53,409 58,391 Z"],"forearm":["M 275,366 266,375 263,380 260,383 259,382 260,383 258,385 256,385 254,389 245,398 245,401 250,411 259,423 275,433 276,429 276,403 275,402 274,386 273,385 273,375 Z","M 123,369 124,372 124,391 123,392 122,407 121,408 122,433 132,428 140,421 146,413 153,399 152,396 142,386 141,387 138,382 137,383 135,380 134,381 Z","M 163,387 152,411 143,424 143,426 154,430 171,440 169,430 169,423 168,422 168,415 167,414 167,407 166,406 166,399 165,398 164,387 Z","M 234,386 231,402 231,410 230,411 230,419 228,426 227,440 234,435 234,431 239,427 244,429 241,431 255,426 255,424 244,408 Z"],"erectors":["M 184,309 180,317 175,340 167,367 166,378 167,379 167,389 168,390 173,434 175,443 182,450 190,455 194,446 195,429 196,428 196,387 197,386 196,383 196,340 192,322 186,310 Z","M 214,310 212,310 206,321 203,331 202,345 201,346 201,418 202,419 203,443 205,451 207,454 211,453 222,444 223,441 226,414 228,406 228,399 229,398 230,382 231,381 231,369 216,314 Z"],"glutes":["M 138,434 130,436 120,445 114,454 107,473 105,492 106,493 106,503 109,516 114,529 121,541 130,549 146,550 156,548 173,541 179,537 189,527 193,520 196,510 196,489 194,479 189,468 184,461 173,450 154,438 146,435 139,435 Z","M 252,435 237,441 225,449 213,461 209,467 203,481 202,491 201,492 201,508 202,509 202,514 207,525 217,536 226,542 238,547 253,550 264,550 268,549 275,542 282,531 290,509 291,497 292,496 292,485 291,484 290,472 287,463 277,445 268,436 265,435 Z"],"hamstrings":["M 189,539 177,548 167,552 179,641 187,606 187,600 189,593 189,584 190,583 190,564 191,563 190,562 190,540 Z","M 207,539 207,558 206,559 207,586 208,587 208,594 209,595 209,601 210,602 213,623 218,639 219,638 219,629 220,628 222,606 228,576 228,566 229,565 230,552 220,548 Z","M 165,553 151,557 143,557 140,558 137,578 136,579 136,589 135,590 133,660 134,661 135,673 140,689 139,690 136,686 132,668 128,684 124,693 125,694 123,697 122,696 123,698 121,700 120,699 121,700 119,703 118,702 119,704 116,705 117,706 116,707 128,695 127,694 129,691 135,690 136,695 142,707 144,708 145,704 146,706 145,703 146,702 147,680 154,654 155,659 154,660 152,680 151,681 151,706 152,707 153,717 158,728 165,708 169,683 173,672 173,654 174,653 174,635 173,634 173,621 172,620 171,605 170,604 169,594 165,589 165,587 167,585 167,572 166,571 Z","M 233,553 232,554 232,566 231,567 231,590 229,591 225,618 224,619 223,663 224,664 224,673 229,688 230,701 233,713 239,729 244,716 245,704 246,703 244,671 240,652 240,647 241,646 250,684 251,708 252,706 254,708 260,696 265,691 269,691 270,692 268,694 267,693 278,703 279,702 276,700 277,699 276,700 274,697 275,696 274,697 272,694 273,692 269,684 266,671 265,671 262,685 258,691 257,690 262,674 263,657 264,656 262,594 261,593 261,579 260,578 259,562 258,559 255,557 247,557 Z","M 131,559 123,560 117,569 111,583 107,600 106,631 108,637 107,638 108,648 112,662 113,681 109,701 104,715 117,696 124,678 124,674 127,664 128,648 129,647 130,603 131,602 131,588 132,587 132,561 Z","M 265,559 265,590 266,591 266,607 267,608 268,651 269,652 270,667 278,693 284,704 292,714 286,695 285,684 284,683 284,665 288,649 287,647 289,642 288,639 290,635 290,630 289,629 290,628 289,598 283,576 275,561 273,559 Z"],"calves":["M 116,717 111,718 96,735 91,746 89,748 86,758 86,763 85,764 86,799 87,800 88,811 91,819 91,823 93,828 96,831 102,830 111,822 117,811 120,800 120,781 121,780 120,737 119,736 119,726 Z","M 281,717 279,720 278,735 277,736 276,798 280,813 284,820 290,827 297,831 299,831 304,826 309,807 310,794 311,793 311,783 312,782 312,766 307,747 299,733 288,720 Z","M 142,722 140,724 135,735 128,763 128,769 126,777 126,805 136,822 145,829 148,829 156,822 161,809 164,794 164,776 163,775 161,756 151,732 145,723 Z","M 255,722 253,722 251,724 240,744 238,752 236,755 236,761 234,766 234,775 233,776 233,796 234,797 235,807 240,821 248,829 252,829 256,827 261,822 268,811 271,801 271,782 270,781 268,759 261,733 Z","M 95,836 100,863 107,888 107,892 112,912 113,928 114,929 114,942 115,925 116,924 116,900 115,899 115,882 114,881 113,868 109,853 103,840 99,836 Z","M 146,836 144,836 138,843 134,852 130,867 130,873 128,881 128,911 127,912 129,941 130,908 131,907 132,896 135,888 135,884 139,875 148,845 Z","M 251,836 249,840 249,847 264,894 266,910 267,911 268,938 269,888 268,887 267,869 261,848 256,839 Z","M 301,836 298,836 292,842 285,861 285,865 283,870 282,885 281,886 281,906 280,907 282,943 282,929 283,928 284,914 298,855 Z"]}};
+const simpleImages={front:'front_simplified.png',back:'back_simplified.png'};
+function buildAnatomySVG(view){
+  const map=muscleMap[view]||[];
+  const names=Object.fromEntries(map.map(m=>[m.id,m.name]));
+  const regionPaths=simpleRegions[view]||{};
+  let paths='';
+  for(const [id,arr] of Object.entries(regionPaths)){
+    for(const d of arr){
+      paths += `<path class="simpleRegion" data-muscle="${id}" d="${d}" tabindex="0" aria-label="${names[id]||id}"></path>`;
+    }
+  }
+  return `<div class="simpleAnatomicalCanvas"><img src="${simpleImages[view]}" alt="Mapa muscular simplificado ${view==='front'?'frontal':'posterior'}"><svg viewBox="0 0 410 1024" preserveAspectRatio="none" aria-label="Regiões musculares selecionáveis">${paths}</svg><div class="simpleMapLabel" id="simpleMapLabel"></div></div>`;
+}
+function renderMuscleMap(){
+  const wrap=document.getElementById('muscleSvgWrap'); if(!wrap)return;
+  wrap.innerHTML=buildAnatomySVG(currentMuscleView);
+  const tip=wrap.querySelector('#simpleMapLabel');
+  wrap.querySelectorAll('.simpleRegion').forEach(el=>{
+    el.classList.toggle('selected',el.dataset.muscle===selectedMuscle);
+    const show=()=>{const m=(muscleMap[currentMuscleView]||[]).find(x=>x.id===el.dataset.muscle);if(!m||!tip)return;tip.textContent=m.name;tip.classList.add('show')};
+    const hide=()=>{if(tip)tip.classList.remove('show')};
+    el.addEventListener('mouseenter',show);el.addEventListener('mouseleave',hide);el.addEventListener('focus',show);el.addEventListener('blur',hide);
+    el.addEventListener('click',()=>selectMuscle(el.dataset.muscle));
+    el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectMuscle(el.dataset.muscle)}});
+  });
+  renderMuscleDetail();
+}
+function selectMuscle(id){selectedMuscle=id;renderMuscleMap()}
+
+init();
+</script>
+</body></html>
